@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0a1628;--navy2:#112240;
+  --gold:#b8972a;--gold2:#d4af3a;--gold-light:#f0d060;
+  --cream:#f9f6f0;--white:#ffffff;--gray:#8a8a8a;
+  --light:#e8e4dd;--red:#c0392b;--green:#16a34a;
+  --font-serif:'Cormorant Garamond',Georgia,serif;
+  --font-sans:'Montserrat',sans-serif;
+}
+body{font-family:var(--font-sans);background:var(--cream);color:var(--navy);min-height:100vh;overflow-x:hidden}
+.page{display:none;min-height:100vh}.page.active{display:block}
+
+/* ── TOP BAR ── */
+.topbar{background:var(--navy);padding:7px 32px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.6);letter-spacing:.5px}
+.topbar a{color:var(--gold2);text-decoration:none;transition:color .2s}.topbar a:hover{color:var(--gold-light)}
+.topbar-left{display:flex;align-items:center;gap:20px}
+.topbar-right{display:flex;align-items:center;gap:16px}
+.topbar-phone{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.7)}
+
+/* ── NAV ── */
+nav{background:var(--white);padding:0 32px;height:72px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--gold);position:sticky;top:0;z-index:200;box-shadow:0 2px 20px rgba(10,22,40,.1)}
+.nav-logo-text{font-family:var(--font-serif);font-size:28px;font-weight:700;color:var(--navy);letter-spacing:2px}
+.nav-logo-sub{font-family:var(--font-sans);font-size:8px;font-weight:500;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-top:-2px}
+.nav-links{display:flex;align-items:center;gap:0;list-style:none}
+.nav-links li{position:relative}
+.nav-links a{color:var(--navy);font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;padding:24px 16px;display:block;transition:color .2s;text-decoration:none}
+.nav-links a:hover,.nav-links a.active{color:var(--gold)}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:16px;right:16px;height:3px;background:var(--gold);transform:scaleX(0);transition:transform .2s}
+.nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1)}
+.nav-cta{display:flex;gap:10px;align-items:center}
+.btn-nav-login{padding:9px 20px;border:1.5px solid var(--navy);color:var(--navy);font-family:var(--font-sans);font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;background:transparent;border-radius:2px;transition:all .2s}
+.btn-nav-login:hover{background:var(--navy);color:#fff}
+.btn-nav-apply{padding:9px 20px;background:var(--gold);color:var(--white);border:1.5px solid var(--gold);font-family:var(--font-sans);font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .2s}
+.btn-nav-apply:hover{background:#9a7d20;border-color:#9a7d20}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:1000;background:rgba(10,22,40,.8);backdrop-filter:blur(4px);align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;width:100%;max-width:460px;position:relative;animation:mIn .2s ease;box-shadow:0 40px 80px rgba(10,22,40,.3)}
+@keyframes mIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.modal-head{background:var(--navy);padding:28px 32px 22px}
+.modal-head-logo{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.modal-head-u{width:42px;height:42px;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:22px;font-weight:700;color:var(--gold)}
+.modal-head-brand{font-family:var(--font-serif);font-size:20px;font-weight:700;color:#fff;letter-spacing:1px}
+.modal-head-sub{font-size:10px;color:var(--gold2);letter-spacing:2px;text-transform:uppercase}
+.modal h2{font-family:var(--font-serif);font-size:26px;color:#fff;font-weight:600;letter-spacing:.5px}
+.modal-body{padding:28px 32px 32px}
+.modal-close{position:absolute;top:14px;right:14px;width:28px;height:28px;background:rgba(255,255,255,.1);border:none;cursor:pointer;color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.modal-close:hover{background:rgba(255,255,255,.2)}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:6px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 14px;border:1.5px solid var(--light);font-family:var(--font-sans);font-size:13px;color:var(--navy);background:#fafafa;outline:none;transition:border-color .2s;border-radius:1px}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold);background:#fff}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pw-wrap{position:relative}.pw-wrap input{padding-right:40px}
+.pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--gray);font-size:13px}
+.form-error{background:#fef2f2;border-left:3px solid var(--red);padding:10px 12px;font-size:12px;color:var(--red);margin-bottom:14px;display:none}
+.form-error.show{display:block}
+.form-success{background:#f0fdf4;border-left:3px solid #16a34a;padding:10px 12px;font-size:12px;color:#15803d;margin-bottom:14px;display:none}
+.form-success.show{display:block}
+.btn-modal{width:100%;padding:13px;background:var(--navy);color:#fff;border:none;font-family:var(--font-sans);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:background .2s;margin-top:4px;border-radius:1px}
+.btn-modal:hover{background:var(--gold)}
+.btn-modal-ghost{width:100%;padding:11px;background:transparent;color:var(--navy);border:1.5px solid var(--light);font-family:var(--font-sans);font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-top:8px;border-radius:1px}
+.btn-modal-ghost:hover{border-color:var(--navy)}
+.modal-switch{text-align:center;margin-top:16px;font-size:12px;color:var(--gray)}
+.modal-switch a{color:var(--gold);font-weight:600;cursor:pointer;text-decoration:underline}
+.demo-hint{background:rgba(184,151,42,.08);border:1px solid rgba(184,151,42,.3);border-left:3px solid var(--gold);padding:12px 14px;margin-bottom:18px}
+.demo-hint p{font-size:11px;color:#6b5000;line-height:1.8}
+.demo-hint strong{font-weight:700;color:#4a3800}
+
+/* wide modal */
+.modal.wide{max-width:640px}
+
+/* ── HERO ── */
+.hero{background:var(--navy);min-height:calc(100vh - 110px);display:grid;grid-template-columns:1fr 1fr;align-items:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(10,22,40,1) 0%,rgba(17,34,64,.85) 100%)}
+.hero-bg{position:absolute;inset:0;background-image:url('https://www.usla.com.tr/Upload/SliderImage/slider-06-04-2026-10-09-28_2026_4_6_10_9_28_181.webp');background-size:cover;background-position:center;opacity:.18}
+.hero-left{position:relative;z-index:1;padding:80px 60px}
+.hero-tag{display:inline-block;background:rgba(184,151,42,.2);border:1px solid rgba(184,151,42,.5);color:var(--gold2);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:7px 16px;margin-bottom:28px}
+.hero h1{font-family:var(--font-serif);font-size:clamp(40px,5vw,68px);font-weight:700;color:#fff;line-height:1.1;letter-spacing:-.5px;margin-bottom:20px}
+.hero h1 span{color:var(--gold2);font-style:italic}
+.hero-desc{font-size:14px;color:rgba(255,255,255,.65);line-height:1.8;max-width:460px;margin-bottom:36px;font-weight:300;letter-spacing:.3px}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap}
+.btn-hero-primary{padding:14px 32px;background:var(--gold);color:var(--navy);border:2px solid var(--gold);font-family:var(--font-sans);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;border-radius:1px}
+.btn-hero-primary:hover{background:#9a7d20;border-color:#9a7d20;color:#fff}
+.btn-hero-outline{padding:14px 32px;background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);font-family:var(--font-sans);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;border-radius:1px}
+.btn-hero-outline:hover{border-color:#fff;background:rgba(255,255,255,.08)}
+.hero-stats{display:flex;gap:40px;margin-top:52px;padding-top:32px;border-top:1px solid rgba(184,151,42,.25)}
+.h-stat .num{font-family:var(--font-serif);font-size:32px;font-weight:700;color:var(--gold2)}
+.h-stat .lbl{font-size:10px;color:rgba(255,255,255,.5);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.hero-right{position:relative;z-index:1;padding:60px 60px 60px 20px}
+.preview-card{background:rgba(255,255,255,.05);border:1px solid rgba(184,151,42,.2);border-radius:3px;overflow:hidden;backdrop-filter:blur(10px)}
+.pc-bar{background:var(--navy2);padding:10px 16px;display:flex;align-items:center;gap:6px;border-bottom:1px solid rgba(184,151,42,.2)}
+.pc-dot{width:8px;height:8px;border-radius:50%}.pc-dot.r{background:#ff5f57}.pc-dot.y{background:#febc2e}.pc-dot.g{background:#28c840}
+.pc-url{margin-left:auto;font-size:10px;color:rgba(255,255,255,.35);font-family:monospace;letter-spacing:.5px}
+.pc-body{display:grid;grid-template-columns:160px 1fr;height:320px}
+.pc-side{background:rgba(10,22,40,.9);padding:14px 10px;border-right:1px solid rgba(184,151,42,.15)}
+.pc-slogo{display:flex;align-items:center;gap:8px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid rgba(184,151,42,.15)}
+.pc-slogo-box{width:26px;height:26px;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:14px;font-weight:700;color:var(--gold)}
+.pc-slogo-text{font-family:var(--font-serif);font-size:13px;font-weight:700;color:#fff;letter-spacing:1px}
+.pc-ni{display:flex;align-items:center;gap:8px;padding:8px 10px;font-size:11px;color:rgba(255,255,255,.4);margin-bottom:1px;border-radius:2px;cursor:pointer}
+.pc-ni:hover,.pc-ni.on{background:rgba(184,151,42,.12);color:var(--gold2)}
+.pc-main{background:#f4f1eb;padding:14px;overflow:hidden}
+.pc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.pc-title{font-size:12px;font-weight:700;color:var(--navy);font-family:var(--font-serif)}
+.pc-sub{font-size:9px;color:var(--gray);margin-top:1px}
+.pc-badge{background:var(--navy);color:var(--gold2);font-size:9px;padding:2px 8px;letter-spacing:.5px;font-weight:600;border-radius:1px}
+.pc-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.pc-c{background:#fff;padding:10px;border:1px solid var(--light);border-bottom:2px solid var(--gold)}
+.pc-c .v{font-family:var(--font-serif);font-size:20px;font-weight:700;color:var(--navy)}
+.pc-c .l{font-size:8px;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
+.pc-c .g{font-size:8px;color:var(--gold);margin-top:3px;font-weight:600}
+.pc-row{display:flex;align-items:center;gap:8px;background:#fff;padding:8px;border:1px solid var(--light);margin-bottom:4px}
+.pc-icon{width:28px;height:28px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.pc-cn{font-size:10px;font-weight:600;color:var(--navy)}.pc-ci{font-size:8px;color:var(--gray);margin-top:1px}
+.pc-pb{height:2px;background:var(--light);margin-top:4px;overflow:hidden}.pc-pf{height:100%;background:var(--gold)}
+
+/* ── SECTIONS ── */
+.sec{padding:80px 60px;max-width:1280px;margin:0 auto}
+.sec-tag{display:inline-flex;align-items:center;gap:10px;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.sec-tag::before{content:'';width:30px;height:1px;background:var(--gold)}
+h2{font-family:var(--font-serif);font-size:clamp(30px,4vw,50px);font-weight:700;color:var(--navy);line-height:1.1;letter-spacing:-.5px;margin-bottom:14px}
+h2 span{color:var(--gold);font-style:italic}
+.sec-desc{font-size:14px;color:var(--gray);line-height:1.8;max-width:540px;margin-bottom:48px;font-weight:300}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--light)}
+.fc{background:var(--white);padding:36px 32px;transition:all .2s;position:relative;overflow:hidden}
+.fc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--gold);transform:scaleX(0);transition:transform .3s;transform-origin:left}
+.fc:hover::after{transform:scaleX(1)}.fc:hover{background:var(--cream)}
+.fc-icon{width:48px;height:48px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:20px}
+.fc h3{font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--navy);margin-bottom:10px}
+.fc p{font-size:13px;color:var(--gray);line-height:1.7}
+.fc-tag{display:inline-block;margin-top:16px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--gold);padding-bottom:1px}
+.crs-sec{background:var(--navy);padding:80px 60px}
+.crs-inner{max-width:1280px;margin:0 auto}
+.crs-sec .sec-tag{color:var(--gold2)}.crs-sec h2{color:#fff}.crs-sec .sec-desc{color:rgba(255,255,255,.5)}
+.crs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(184,151,42,.2)}
+.cc{background:var(--navy2);overflow:hidden;cursor:pointer;transition:all .2s;position:relative}
+.cc:hover{background:rgba(17,34,64,.7)}
+.cc-thumb-emoji{height:160px;display:flex;align-items:center;justify-content:center;font-size:52px;background:linear-gradient(135deg,var(--navy),var(--navy2))}
+.cc-cat{position:absolute;bottom:12px;left:12px;background:var(--gold);color:var(--navy);font-size:9px;font-weight:700;padding:3px 10px;letter-spacing:1px;text-transform:uppercase}
+.cc-body{padding:20px}
+.cc h4{font-family:var(--font-serif);font-size:17px;font-weight:600;color:#fff;margin-bottom:6px;line-height:1.35}
+.cc p{font-size:11px;color:rgba(255,255,255,.45);line-height:1.6;margin-bottom:14px}
+.cc-meta{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid rgba(184,151,42,.15)}
+.cc-inst{font-size:10px;color:rgba(255,255,255,.4)}.cc-inst strong{color:rgba(255,255,255,.65);font-weight:600}
+.cc-rate{font-size:11px;color:var(--gold2);font-weight:700}
+.sponsors-sec{background:#fff;padding:40px 60px;border-top:1px solid var(--light)}
+.sponsors-inner{max-width:1280px;margin:0 auto}
+.sp-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:24px;text-align:center}
+.sp-grid{display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap}
+.sp-item{font-family:var(--font-sans);font-size:13px;font-weight:700;color:var(--gray);letter-spacing:1px;text-transform:uppercase;opacity:.6;transition:opacity .2s}
+.sp-item:hover{opacity:1;color:var(--navy)}
+.cta-sec{background:var(--gold);padding:72px 60px;text-align:center;position:relative;overflow:hidden}
+.cta-sec::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(255,255,255,.04) 40px,rgba(255,255,255,.04) 80px)}
+.cta-inner{max-width:640px;margin:0 auto;position:relative}
+.cta-sec h2{color:var(--navy);margin-bottom:14px}
+.cta-sec p{color:rgba(10,22,40,.7);font-size:14px;margin-bottom:32px}
+footer{background:var(--navy);padding:60px 60px 30px}
+.footer-inner{max-width:1280px;margin:0 auto}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
+.footer-brand-logo{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.footer-u{width:40px;height:40px;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:22px;font-weight:700;color:var(--gold)}
+.footer-brand-name{font-family:var(--font-serif);font-size:22px;font-weight:700;color:#fff;letter-spacing:1px}
+.footer-brand-sub{font-size:9px;color:var(--gold2);letter-spacing:2px;text-transform:uppercase}
+.footer-desc{font-size:12px;color:rgba(255,255,255,.4);line-height:1.8;margin-top:12px;max-width:280px}
+.footer-col h4{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);margin-bottom:16px}
+.footer-col ul{list-style:none}.footer-col li{margin-bottom:8px}
+.footer-col a{font-size:12px;color:rgba(255,255,255,.45);text-decoration:none;transition:color .2s;cursor:pointer}
+.footer-col a:hover{color:var(--gold2)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:24px;display:flex;align-items:center;justify-content:space-between}
+.footer-copy{font-size:11px;color:rgba(255,255,255,.3)}
+.footer-social{display:flex;gap:12px}
+.soc-btn{width:30px;height:30px;border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all .2s;color:rgba(255,255,255,.4)}
+.soc-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── DASHBOARD LAYOUT ── */
+.dash-wrap{display:grid;grid-template-columns:256px 1fr;min-height:100vh;background:#f0ece4}
+.dsb{background:var(--navy);display:flex;flex-direction:column;min-height:100vh}
+.dsb-head{padding:0;border-bottom:1px solid rgba(184,151,42,.2)}
+.dsb-brand{padding:20px 20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(184,151,42,.15)}
+.dsb-brand-u{width:34px;height:34px;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:18px;font-weight:700;color:var(--gold)}
+.dsb-brand-name{font-family:var(--font-serif);font-size:17px;font-weight:700;color:#fff;letter-spacing:.5px}
+.dsb-brand-sub{font-size:8px;color:var(--gold2);letter-spacing:2px;text-transform:uppercase}
+.dsb-user{padding:14px 20px;display:flex;align-items:center;gap:10px}
+.dsb-av{width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;font-family:var(--font-sans)}
+.dsb-uname{font-size:12px;font-weight:600;color:#fff;font-family:var(--font-sans)}
+.role-tag{font-size:8px;padding:2px 8px;letter-spacing:1px;font-weight:700;text-transform:uppercase;display:inline-block;margin-top:2px;border-radius:1px}
+.rt-admin{background:rgba(184,151,42,.25);color:var(--gold2)}
+.rt-inst{background:rgba(184,151,42,.15);color:var(--gold)}
+.rt-stu{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7)}
+.dsb-nav{padding:12px 10px;flex:1}
+.dsb-sec-label{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(184,151,42,.4);padding:0 10px;margin:16px 0 6px}
+.dsb-sec-label:first-child{margin-top:4px}
+.si{display:flex;align-items:center;gap:10px;padding:9px 10px;font-size:11px;color:rgba(255,255,255,.45);cursor:pointer;transition:all .15s;margin-bottom:1px;border:none;background:none;width:100%;text-align:left;border-left:2px solid transparent;letter-spacing:.3px;font-family:var(--font-sans)}
+.si:hover{background:rgba(184,151,42,.08);color:rgba(255,255,255,.8);border-left-color:rgba(184,151,42,.3)}
+.si.on{background:rgba(184,151,42,.15);color:var(--gold2);border-left-color:var(--gold)}
+.si-ic{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.dsb-foot{padding:12px 10px;border-top:1px solid rgba(184,151,42,.1)}
+.dmain{padding:28px 32px;overflow-y:auto}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid rgba(184,151,42,.2)}
+.pt{font-family:var(--font-serif);font-size:24px;font-weight:700;color:var(--navy)}
+.ps{font-size:11px;color:var(--gray);margin-top:2px;letter-spacing:.3px}
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.sc{background:#fff;padding:20px;border-bottom:3px solid var(--gold);box-shadow:0 1px 8px rgba(10,22,40,.04)}
+.sc .sl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);margin-bottom:8px}
+.sc .sv{font-family:var(--font-serif);font-size:28px;font-weight:700;color:var(--navy)}
+.sc .sg2{font-size:10px;margin-top:4px;font-weight:500}
+.up{color:#16a34a}.dn{color:var(--red)}
+.tc{background:#fff;box-shadow:0 1px 8px rgba(10,22,40,.04);margin-bottom:18px}
+.tch{padding:16px 20px;border-bottom:2px solid var(--gold);display:flex;align-items:center;justify-content:space-between}
+.tct{font-family:var(--font-serif);font-size:16px;font-weight:600;color:var(--navy)}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 16px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);background:#faf8f4;text-align:left;border-bottom:1px solid var(--light)}
+td{padding:13px 16px;font-size:12px;color:var(--navy);border-bottom:1px solid #f0ece4}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#faf8f4}
+.uc{display:flex;align-items:center;gap:9px}
+.ua{width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;font-family:var(--font-sans)}
+.un{font-weight:600;font-size:12px}.ue{font-size:10px;color:var(--gray)}
+.pill{display:inline-block;padding:2px 9px;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;border-radius:1px}
+.pg{background:rgba(22,163,74,.1);color:#15803d}
+.pr{background:rgba(184,151,42,.12);color:var(--gold)}
+.py{background:rgba(10,22,40,.08);color:var(--navy)}
+.pz{background:rgba(0,0,0,.05);color:var(--gray)}
+.p-locked{background:rgba(192,57,43,.1);color:var(--red)}
+.pb-w{width:100px}.pb-bg{height:3px;background:var(--light);overflow:hidden}.pb-f{height:100%;background:var(--gold)}
+.bsm{padding:7px 14px;font-family:var(--font-sans);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border-radius:1px;transition:all .15s}
+.bsm-o{background:transparent;border:1.5px solid var(--light);color:var(--navy)}.bsm-o:hover{border-color:var(--navy)}
+.bsm-r{background:var(--navy);color:#fff;border:1.5px solid var(--navy)}.bsm-r:hover{background:var(--gold);border-color:var(--gold)}
+.bsm-g{background:var(--green);color:#fff;border:1.5px solid var(--green)}.bsm-g:hover{background:#15803d;border-color:#15803d}
+.bsm-red{background:var(--red);color:#fff;border:1.5px solid var(--red)}.bsm-red:hover{opacity:.85}
+.bsm-gold{background:var(--gold);color:var(--navy);border:1.5px solid var(--gold)}.bsm-gold:hover{background:#9a7d20}
+.an-list{padding:0 20px 8px}
+.an-item{padding:16px 0;border-bottom:1px solid var(--light);display:flex;gap:12px}
+.an-item:last-child{border-bottom:none}
+.an-line{width:2px;flex-shrink:0;background:var(--gold)}
+.an-title{font-family:var(--font-serif);font-size:14px;font-weight:600;color:var(--navy)}
+.an-body{font-size:12px;color:var(--gray);margin-top:3px;line-height:1.6}
+.an-date{font-size:10px;color:var(--light);margin-top:4px;letter-spacing:.5px}
+.cg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ccu{background:#fff;box-shadow:0 1px 8px rgba(10,22,40,.04);cursor:pointer;transition:all .2s;overflow:hidden;border-bottom:2px solid transparent}
+.ccu:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(10,22,40,.08);border-bottom-color:var(--gold)}
+.ctu{height:110px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:40px}
+.cbu{padding:14px}
+.cnu{font-family:var(--font-serif);font-size:14px;font-weight:600;color:var(--navy);margin-bottom:3px}
+.ciu{font-size:11px;color:var(--gray);margin-bottom:9px;letter-spacing:.2px}
+.cpl{display:flex;justify-content:space-between;font-size:9px;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+
+/* ── CLASS MANAGEMENT (Sınıf Sistemi) ── */
+.class-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.class-card{background:#fff;box-shadow:0 1px 8px rgba(10,22,40,.04);border-left:4px solid var(--gold);overflow:hidden;cursor:pointer;transition:all .2s}
+.class-card:hover{box-shadow:0 4px 20px rgba(10,22,40,.1);transform:translateY(-2px)}
+.class-card-head{padding:16px 18px 12px;border-bottom:1px solid var(--light)}
+.class-card-name{font-family:var(--font-serif);font-size:16px;font-weight:700;color:var(--navy)}
+.class-card-meta{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.class-meta-tag{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;background:rgba(184,151,42,.12);color:var(--gold);border-radius:1px}
+.class-card-body{padding:14px 18px}
+.class-stat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.class-stat-label{font-size:10px;color:var(--gray);letter-spacing:.5px}
+.class-stat-val{font-size:12px;font-weight:700;color:var(--navy)}
+.class-card-foot{padding:10px 18px;background:#faf8f4;display:flex;gap:6px}
+
+/* Student detail in class */
+.student-list-item{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #f0ece4;transition:background .15s}
+.student-list-item:last-child{border-bottom:none}
+.student-list-item:hover{background:#faf8f4}
+.sli-av{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;border-radius:1px}
+.sli-info{flex:1}
+.sli-name{font-size:12px;font-weight:600;color:var(--navy)}
+.sli-no{font-size:10px;color:var(--gold);font-weight:700;letter-spacing:.5px}
+.sli-email{font-size:10px;color:var(--gray)}
+.sli-actions{display:flex;gap:6px;align-items:center}
+
+/* Okul no badge */
+.school-no{display:inline-flex;align-items:center;gap:4px;background:rgba(184,151,42,.1);border:1px solid rgba(184,151,42,.3);color:var(--gold);font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:1px}
+.school-no-empty{background:rgba(0,0,0,.04);border:1px dashed var(--light);color:var(--gray);font-size:10px;padding:2px 8px;border-radius:1px;letter-spacing:.5px}
+
+/* Durum badge - şifre aktif/kilitli */
+.status-active{background:rgba(22,163,74,.1);color:#15803d;font-size:9px;font-weight:700;padding:3px 9px;letter-spacing:.5px;text-transform:uppercase;border-radius:1px}
+.status-locked{background:rgba(192,57,43,.1);color:var(--red);font-size:9px;font-weight:700;padding:3px 9px;letter-spacing:.5px;text-transform:uppercase;border-radius:1px;display:flex;align-items:center;gap:4px}
+
+/* Filter bar */
+.filter-bar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.filter-bar select,.filter-bar input{padding:8px 12px;border:1.5px solid var(--light);font-family:var(--font-sans);font-size:12px;color:var(--navy);background:#fff;outline:none;transition:border-color .2s;border-radius:1px;min-width:140px}
+.filter-bar select:focus,.filter-bar input:focus{border-color:var(--gold)}
+.filter-bar input[type=text]{flex:1;min-width:200px}
+
+/* Inline edit */
+.inline-input{padding:4px 8px;border:1.5px solid var(--gold);font-family:var(--font-sans);font-size:11px;color:var(--navy);background:#fff;outline:none;width:110px;border-radius:1px}
+
+/* Tabs inside panel */
+.inner-tabs{display:flex;border-bottom:2px solid var(--light);margin-bottom:20px}
+.inner-tab{padding:10px 20px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--gray);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.inner-tab:hover{color:var(--navy)}
+.inner-tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* Empty state */
+.empty-state{text-align:center;padding:60px 20px;color:var(--gray)}
+.empty-state-icon{font-size:48px;margin-bottom:16px}
+.empty-state-text{font-family:var(--font-serif);font-size:18px;color:var(--navy);margin-bottom:8px}
+.empty-state-sub{font-size:12px;line-height:1.7}
+
+/* Toast */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--navy);color:#fff;padding:12px 20px;font-size:12px;font-weight:600;letter-spacing:.5px;z-index:9999;box-shadow:0 8px 32px rgba(10,22,40,.3);transform:translateY(80px);opacity:0;transition:all .3s;border-left:3px solid var(--gold)}
+.toast.show{transform:none;opacity:1}
+.toast.toast-ok{border-left-color:var(--green)}
+.toast.toast-err{border-left-color:var(--red)}
+
+@media(max-width:768px){
+  .hero{grid-template-columns:1fr}.hero-right{display:none}.hero-left{padding:40px 24px}
+  .topbar,.nav-links{display:none}
+  nav{padding:0 16px}
+  .feat-grid,.crs-grid,.cg,.class-grid{grid-template-columns:1fr}
+  .sg{grid-template-columns:repeat(2,1fr)}
+  .dash-wrap{grid-template-columns:1fr}.dsb{min-height:auto}
+  .footer-top{grid-template-columns:1fr 1fr}
+  footer{padding:40px 24px 24px}.sec{padding:60px 24px}
+}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- ── LOGIN MODAL ── -->
+<div class="modal-overlay" id="modal-login" onclick="bgClose(event,'login')">
+  <div class="modal">
+    <div class="modal-head">
+      <button class="modal-close" onclick="closeM('login')">✕</button>
+      <div class="modal-head-logo"><div class="modal-head-u">U</div><div><div class="modal-head-brand">USLA Akademi</div><div class="modal-head-sub">Dijital Öğrenme Platformu</div></div></div>
+      <h2>Giriş Yapın</h2>
+    </div>
+    <div class="modal-body">
+      <div class="demo-hint"><p><strong>🔑 Demo Hesapları:</strong><br>Admin &nbsp;&nbsp;&nbsp;→ <strong>admin@usla.com</strong> / <strong>Usla2025!</strong><br>Eğitmen → <strong>egitmen@usla.com</strong> / <strong>Chef2025!</strong><br>Öğrenci &nbsp;→ <strong>ogrenci@usla.com</strong> / <strong>Ogrenci2025!</strong></p></div>
+      <div class="form-error" id="login-err"></div>
+      <div class="form-group"><label>E-posta Adresi</label><input type="email" id="lin-email" placeholder="ornek@email.com" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <div class="form-group"><label>Şifre</label><div class="pw-wrap"><input type="password" id="lin-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/><button class="pw-eye" onclick="togglePw('lin-pw',this)">👁</button></div></div>
+      <button class="btn-modal" onclick="doLogin()">Giriş Yap</button>
+      <div class="modal-switch">Hesabınız yok mu? <a onclick="switchM('login','register')">Kayıt olun →</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── REGISTER MODAL ── -->
+<div class="modal-overlay" id="modal-register" onclick="bgClose(event,'register')">
+  <div class="modal">
+    <div class="modal-head">
+      <button class="modal-close" onclick="closeM('register')">✕</button>
+      <div class="modal-head-logo"><div class="modal-head-u">U</div><div><div class="modal-head-brand">USLA Akademi</div><div class="modal-head-sub">Dijital Öğrenme Platformu</div></div></div>
+      <h2>Hesap Oluşturun</h2>
+    </div>
+    <div class="modal-body">
+      <div class="form-error" id="reg-err"></div>
+      <div class="form-success" id="reg-ok"></div>
+      <div class="form-group"><label>Ad Soyad</label><input type="text" id="reg-name" placeholder="Adınız Soyadınız"/></div>
+      <div class="form-group"><label>E-posta</label><input type="email" id="reg-email" placeholder="ornek@email.com"/></div>
+      <div class="form-group"><label>Rol</label><select id="reg-role"><option value="student">Öğrenci</option><option value="instructor">Eğitmen</option></select></div>
+      <div class="form-group"><label>Şifre</label><div class="pw-wrap"><input type="password" id="reg-pw" placeholder="En az 8 karakter"/><button class="pw-eye" onclick="togglePw('reg-pw',this)">👁</button></div></div>
+      <div class="form-group"><label>Şifre Tekrarı</label><div class="pw-wrap"><input type="password" id="reg-pw2" placeholder="Şifrenizi tekrar girin"/><button class="pw-eye" onclick="togglePw('reg-pw2',this)">👁</button></div></div>
+      <button class="btn-modal" onclick="doRegister()">Başvuruyu Tamamla</button>
+      <div class="modal-switch">Hesabınız var mı? <a onclick="switchM('register','login')">Giriş yapın →</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SINIF OLUŞTUR MODAL ── -->
+<div class="modal-overlay" id="modal-class" onclick="bgClose(event,'class')">
+  <div class="modal wide">
+    <div class="modal-head">
+      <button class="modal-close" onclick="closeM('class')">✕</button>
+      <div class="modal-head-logo"><div class="modal-head-u">U</div><div><div class="modal-head-brand">USLA Akademi</div><div class="modal-head-sub">Sınıf Yönetimi</div></div></div>
+      <h2 id="class-modal-title">Yeni Sınıf Oluştur</h2>
+    </div>
+    <div class="modal-body">
+      <div class="form-error" id="class-err"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Sınıf Adı *</label><input type="text" id="cls-name" placeholder="örn. Aşçılık A"/></div>
+        <div class="form-group"><label>Grup *</label><input type="text" id="cls-group" placeholder="örn. Grup 1"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Dönem *</label><input type="text" id="cls-term" placeholder="örn. 2025 Bahar"/></div>
+        <div class="form-group"><label>Bağlı Kurs</label>
+          <select id="cls-course">
+            <option value="">— Seçiniz —</option>
+            <option>🔪 Profesyonel Aşçılık Eğitimi</option>
+            <option>🥐 Profesyonel Pastacılık</option>
+            <option>🍣 Shunichi Horikoshi ile Sushi</option>
+            <option>☕ Barista Eğitimi</option>
+            <option>🐟 Çiğdem Alagök ile Deniz Ürünleri</option>
+            <option>🍫 Mutfağa İlk Adım — Çikolata</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Eğitmen</label>
+        <select id="cls-instructor">
+          <option value="">— Seçiniz —</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Açıklama</label><textarea id="cls-desc" rows="2" placeholder="Sınıf hakkında kısa açıklama..."></textarea></div>
+      <input type="hidden" id="cls-edit-id"/>
+      <button class="btn-modal" onclick="saveClass()">Sınıfı Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ÖĞRENCİ EKLE MODAL ── -->
+<div class="modal-overlay" id="modal-add-student" onclick="bgClose(event,'add-student')">
+  <div class="modal wide">
+    <div class="modal-head">
+      <button class="modal-close" onclick="closeM('add-student')">✕</button>
+      <div class="modal-head-logo"><div class="modal-head-u">U</div><div><div class="modal-head-brand">USLA Akademi</div><div class="modal-head-sub">Sınıfa Öğrenci Ekle</div></div></div>
+      <h2>Öğrenci Ekle — <span id="add-stu-classname" style="font-style:italic;font-size:18px"></span></h2>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--gray);margin-bottom:16px">Sınıfa eklemek istediğiniz öğrencileri seçin. Zaten eklenmiş öğrenciler listede görünmez.</p>
+      <div id="add-student-list" style="max-height:320px;overflow-y:auto;border:1px solid var(--light)"></div>
+      <button class="btn-modal" style="margin-top:16px" onclick="confirmAddStudents()">Seçilenleri Ekle</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── OKUL NO & AKTİF ET MODAL ── -->
+<div class="modal-overlay" id="modal-student-edit" onclick="bgClose(event,'student-edit')">
+  <div class="modal">
+    <div class="modal-head">
+      <button class="modal-close" onclick="closeM('student-edit')">✕</button>
+      <div class="modal-head-logo"><div class="modal-head-u">U</div><div><div class="modal-head-brand">USLA Akademi</div><div class="modal-head-sub">Öğrenci Düzenleme</div></div></div>
+      <h2>Öğrenci Ayarları</h2>
+    </div>
+    <div class="modal-body">
+      <div class="form-success" id="stu-edit-ok"></div>
+      <div id="stu-edit-info" style="padding:14px;background:#faf8f4;border:1px solid var(--light);margin-bottom:18px;border-left:3px solid var(--gold)">
+        <div style="font-size:14px;font-weight:700;color:var(--navy)" id="stu-edit-name"></div>
+        <div style="font-size:11px;color:var(--gray);margin-top:3px" id="stu-edit-email"></div>
+        <div style="margin-top:8px" id="stu-edit-status"></div>
+      </div>
+      <div class="form-group">
+        <label>Okul Numarası</label>
+        <input type="text" id="stu-edit-no" placeholder="örn. USLA-2025-001"/>
+        <div style="font-size:10px;color:var(--gray);margin-top:5px">Format: USLA-YYYY-NNN — istediğiniz formatta girebilirsiniz</div>
+      </div>
+      <div style="background:#fef9ec;border:1px solid rgba(184,151,42,.3);padding:14px;margin-bottom:16px;border-left:3px solid var(--gold)">
+        <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px">Hesap Durumu</div>
+        <div style="font-size:12px;color:var(--gray);margin-bottom:12px" id="stu-edit-status-desc"></div>
+        <button class="bsm bsm-g" id="stu-activate-btn" onclick="toggleStudentActivation()">✓ Hesabı Aktif Et</button>
+        <button class="bsm bsm-red" id="stu-deactivate-btn" onclick="toggleStudentActivation()" style="display:none">🔒 Hesabı Kilitle</button>
+      </div>
+      <input type="hidden" id="stu-edit-uid"/>
+      <button class="btn-modal" onclick="saveStudentEdit()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ LANDING PAGE ══════════════════════════════ -->
+<div id="page-landing" class="page active">
+  <div class="topbar" id="tb">
+    <div class="topbar-left"><span>🏛 Kanyon Kampüs</span><span>🏛 Mecidiyeköy Kampüs</span></div>
+    <div class="topbar-right"><span class="topbar-phone">📞 0212 211 87 52</span><a onclick="openM('login')">Üyelik Girişi</a><a onclick="openM('register')">Başvuru Formu</a></div>
+  </div>
+  <nav id="main-nav">
+    <div onclick="goHome()" style="cursor:pointer;display:flex;flex-direction:column">
+      <img src="https://www.usla.com.tr/Assets/assets/upload/logo.png" style="height:42px;object-fit:contain" onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='flex'"/>
+      <div id="logo-fallback" style="display:none;flex-direction:column"><div class="nav-logo-text">USLA</div><div class="nav-logo-sub">Uluslararası Servis ve Lezzet Akademisi</div></div>
+    </div>
+    <ul class="nav-links" id="nav-public">
+      <li><a onclick="scrollSec('egitimler')">Eğitimler</a></li>
+      <li><a onclick="scrollSec('workshoplar')">Workshoplar</a></li>
+      <li><a onclick="scrollSec('hakkinda')">Hakkında</a></li>
+      <li><a onclick="scrollSec('footer-sec')">Kampüsler</a></li>
+    </ul>
+    <div class="nav-cta" id="nav-auth-btns">
+      <button class="btn-nav-login" onclick="openM('login')">Giriş Yap</button>
+      <button class="btn-nav-apply" onclick="openM('register')">Başvuru Formu</button>
+    </div>
+  </nav>
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-left">
+      <div class="hero-tag">Uluslararası Servis ve Lezzet Akademisi</div>
+      <h1>Profesyonel<br><span>Mutfak Sanatları</span><br>Eğitimi</h1>
+      <p class="hero-desc">Dünya standartlarında eğitim programlarımızla en üst düzeyde mutfak ve ağırlama profesyonelleri yetiştiren Türkiye'nin önde gelen uluslararası aşçılık akademisi.</p>
+      <div class="hero-actions">
+        <button class="btn-hero-primary" onclick="openM('register')">Başvuru Formu</button>
+        <button class="btn-hero-outline" onclick="openM('login')">Platforma Giriş →</button>
+      </div>
+      <div class="hero-stats">
+        <div class="h-stat"><div class="num">16+</div><div class="lbl">Profesyonel Program</div></div>
+        <div class="h-stat"><div class="num">18</div><div class="lbl">Uzman Eğitmen</div></div>
+        <div class="h-stat"><div class="num">30+</div><div class="lbl">Yıl Deneyim</div></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="preview-card">
+        <div class="pc-bar"><div class="pc-dot r"></div><div class="pc-dot y"></div><div class="pc-dot g"></div><div class="pc-url">platform.usla.com.tr/panel</div></div>
+        <div class="pc-body">
+          <div class="pc-side">
+            <div class="pc-slogo"><div class="pc-slogo-box">U</div><div class="pc-slogo-text">USLA</div></div>
+            <div class="pc-ni on">⊞ &nbsp;Panel</div>
+            <div class="pc-ni">📚 &nbsp;Kurslarım</div>
+            <div class="pc-ni">📅 &nbsp;Takvim</div>
+            <div class="pc-ni">📝 &nbsp;Sınavlar</div>
+            <div class="pc-ni">🎥 &nbsp;Canlı Ders</div>
+            <div class="pc-ni">🔔 &nbsp;Duyurular</div>
+          </div>
+          <div class="pc-main">
+            <div class="pc-header"><div><div class="pc-title">Merhaba, Chef Ayşe</div><div class="pc-sub">3 ders devam ediyor</div></div><div class="pc-badge">CANLI: 14:00</div></div>
+            <div class="pc-cards">
+              <div class="pc-c"><div class="v">4</div><div class="l">Kurs</div><div class="g">↑ +1</div></div>
+              <div class="pc-c"><div class="v">67%</div><div class="l">İlerleme</div><div class="g">↑ %12</div></div>
+              <div class="pc-c"><div class="v">2</div><div class="l">Sınav</div><div class="g" style="color:#c0392b">⚠ Yakın</div></div>
+            </div>
+            <div class="pc-row"><div class="pc-icon">🔪</div><div style="flex:1"><div class="pc-cn">Profesyonel Bıçak Teknikleri</div><div class="pc-ci">Chef Mehmet Yılmaz</div><div class="pc-pb"><div class="pc-pf" style="width:75%"></div></div></div><div style="font-size:9px;color:var(--gray)">75%</div></div>
+            <div class="pc-row"><div class="pc-icon">🥐</div><div style="flex:1"><div class="pc-cn">Fransız Pastacılık</div><div class="pc-ci">Chef Sophie Dubois</div><div class="pc-pb"><div class="pc-pf" style="width:40%"></div></div></div><div style="font-size:9px;color:var(--gray)">40%</div></div>
+            <div class="pc-row"><div class="pc-icon">🍣</div><div style="flex:1"><div class="pc-cn">Shunichi Horikoshi ile Sushi</div><div class="pc-ci">Chef Shunichi Horikoshi</div><div class="pc-pb"><div class="pc-pf" style="width:25%"></div></div></div><div style="font-size:9px;color:var(--gray)">25%</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sec" id="egitimler">
+    <div class="sec-tag">Platform Özellikleri</div>
+    <h2>Akademik eğitim <span>tek platformda</span></h2>
+    <p class="sec-desc">Eğitim yönetiminden canlı derslere, sınavlardan ilerleme takibine kadar tüm süreçler dijital platformumuzda.</p>
+    <div class="feat-grid">
+      <div class="fc"><div class="fc-icon">🎬</div><h3>Video Ders İçerikleri</h3><p>Eğitmen videolarını yükleyin, öğrenciler kaldıkları yerden devam etsin.</p><span class="fc-tag">Cloudinary CDN</span></div>
+      <div class="fc"><div class="fc-icon">📡</div><h3>Canlı Ders Sistemi</h3><p>Jitsi Meet entegrasyonu ile sınırsız ücretsiz online dersler.</p><span class="fc-tag">Jitsi Meet API</span></div>
+      <div class="fc"><div class="fc-icon">📊</div><h3>İlerleme Takibi</h3><p>Eğitmenler her öğrencinin ilerlediğini gerçek zamanlı görür.</p><span class="fc-tag">Supabase Realtime</span></div>
+      <div class="fc"><div class="fc-icon">🏫</div><h3>Sınıf & Grup Sistemi</h3><p>Öğrencileri sınıf, grup ve dönemlere göre organize edin. Okul numarası atayın.</p><span class="fc-tag">Yeni Özellik</span></div>
+      <div class="fc"><div class="fc-icon">🔔</div><h3>Akıllı Bildirimler</h3><p>Duyurular, canlı ders hatırlatmaları ve sınav bildirimleri otomatik iletilir.</p><span class="fc-tag">Resend + Supabase</span></div>
+      <div class="fc"><div class="fc-icon">📅</div><h3>Takvim Entegrasyonu</h3><p>Ders saatleri, sınav tarihleri ve canlı ders programı tek takvimde.</p><span class="fc-tag">Takvim Modülü</span></div>
+    </div>
+  </div>
+  <div class="crs-sec" id="workshoplar">
+    <div class="crs-inner">
+      <div class="sec-tag">Akademik Programlar</div>
+      <h2 style="color:#fff">USLA <span>eğitimleri</span></h2>
+      <p class="sec-desc">Profesyonel mutfak eğitmenlerinden hazırlanmış, sertifikalı kurs içerikleri.</p>
+      <div class="crs-grid">
+        <div class="cc"><div class="cc-thumb-emoji">🔪</div><div class="cc-cat">Profesyonel</div><div class="cc-body"><h4>Profesyonel Aşçılık Eğitimi</h4><p>Uluslararası standartlarda profesyonel mutfak eğitimi.</p><div class="cc-meta"><div class="cc-inst">Eğitmen: <strong>USLA Kadrosu</strong></div><div class="cc-rate">★ 4.9</div></div></div></div>
+        <div class="cc"><div class="cc-thumb-emoji">🥐</div><div class="cc-cat">Profesyonel</div><div class="cc-body"><h4>Profesyonel Pastacılık ve Ekmekçilik</h4><p>Fransız pastacılık temelleri, ekmekçilik ve çikolata sanatı.</p><div class="cc-meta"><div class="cc-inst">Eğitmen: <strong>USLA Kadrosu</strong></div><div class="cc-rate">★ 4.8</div></div></div></div>
+        <div class="cc"><div class="cc-thumb-emoji">🍣</div><div class="cc-cat">Uzmanlaşma</div><div class="cc-body"><h4>Shunichi Horikoshi ile Sushi</h4><p>Japon mutfak sanatını dünyaca ünlü Chef'den öğrenin.</p><div class="cc-meta"><div class="cc-inst">Eğitmen: <strong>Shunichi Horikoshi</strong></div><div class="cc-rate">★ 5.0</div></div></div></div>
+        <div class="cc"><div class="cc-thumb-emoji">☕</div><div class="cc-cat">Sertifikalı</div><div class="cc-body"><h4>SCA & MEB Sertifikalı Barista</h4><p>Dünya standartlarında barista eğitimi.</p><div class="cc-meta"><div class="cc-inst">Eğitmen: <strong>USLA Kadrosu</strong></div><div class="cc-rate">★ 4.9</div></div></div></div>
+        <div class="cc"><div class="cc-thumb-emoji">🐟</div><div class="cc-cat">Uzmanlaşma</div><div class="cc-body"><h4>Çiğdem Alagök ile Deniz Ürünleri</h4><p>Deniz ürünleri pişirme teknikleri ve sunum sanatı.</p><div class="cc-meta"><div class="cc-inst">Eğitmen: <strong>Çiğdem Alagök</strong></div><div class="cc-rate">★ 4.8</div></div></div></div>
+        <div class="cc"><div class="cc-thumb-emoji">🍫</div><div class="cc-cat">Başlangıç</div><div class="cc-body"><h4>Mutfağa İlk Adım — Çikolata</h4><p>Çikolata dünyasına mükemmel bir giriş.</p><div class="cc-meta"><div class="cc-inst">Eğitmen: <strong>USLA Kadrosu</strong></div><div class="cc-rate">★ 4.7</div></div></div></div>
+      </div>
+      <div style="text-align:center;margin-top:32px"><button class="btn-hero-primary" onclick="openM('login')">Tüm Programlara Erişin →</button></div>
+    </div>
+  </div>
+  <div class="sponsors-sec"><div class="sponsors-inner"><div class="sp-label">Sponsorlarımız & İş Ortaklarımız</div><div class="sp-grid"><div class="sp-item">Fissler</div><div class="sp-item">Callebaut</div><div class="sp-item">Electrolux</div><div class="sp-item">Yapı Kredi</div><div class="sp-item">Pastavilla</div><div class="sp-item">Diversey</div><div class="sp-item">ID Fine</div></div></div></div>
+  <div class="cta-sec" id="hakkinda">
+    <div class="cta-inner">
+      <div class="sec-tag" style="color:var(--navy);justify-content:center">Dijital Platform</div>
+      <h2>USLA Akademi'ye<br>dijital olarak erişin</h2>
+      <p>Öğrenciler ve eğitmenler için özel geliştirilmiş dijital öğrenme platformu.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <button class="btn-hero-primary" style="background:var(--navy);border-color:var(--navy);color:#fff" onclick="openM('register')">Platforma Kayıt Ol</button>
+        <button class="btn-hero-outline" style="border-color:var(--navy);color:var(--navy)" onclick="openM('login')">Giriş Yap →</button>
+      </div>
+    </div>
+  </div>
+  <footer id="footer-sec">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div><div class="footer-brand-logo"><div class="footer-u">U</div><div><div class="footer-brand-name">USLA Akademi</div><div class="footer-brand-sub">Uluslararası Servis ve Lezzet Akademisi</div></div></div><p class="footer-desc">Dünya standartlarında eğitim programlarıyla en üst düzeyde mutfak ve ağırlama profesyonelleri yetiştiren Türkiye'nin önde gelen uluslararası aşçılık akademisi.</p></div>
+        <div class="footer-col"><h4>Eğitimler</h4><ul><li><a>Profesyonel Aşçılık</a></li><li><a>Profesyonel Pastacılık</a></li><li><a>Japon Mutfağı</a></li><li><a>Barista Eğitimi</a></li></ul></div>
+        <div class="footer-col"><h4>Akademi</h4><ul><li><a>Eğitmenlerimiz</a></li><li><a>Kurumsal Çözümler</a></li><li><a>Workshoplar</a></li><li><a>Sponsorlarımız</a></li></ul></div>
+        <div class="footer-col"><h4>İletişim</h4><ul><li><a>0212 211 87 52</a></li><li><a>Kanyon Kampüs</a></li><li><a>Mecidiyeköy Kampüs</a></li><li><a>KVKK</a></li></ul></div>
+      </div>
+      <div class="footer-bottom"><div class="footer-copy">© 2024 USLA Akademi — Uluslararası Servis ve Lezzet Akademisi</div><div class="footer-social"><div class="soc-btn">f</div><div class="soc-btn">in</div><div class="soc-btn">▶</div><div class="soc-btn">♪</div></div></div>
+    </div>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════ ADMIN DASHBOARD ══════════════════════════════ -->
+<div id="page-admin" class="page">
+  <div class="dash-wrap">
+    <div class="dsb">
+      <div class="dsb-head">
+        <div class="dsb-brand"><div class="dsb-brand-u">U</div><div><div class="dsb-brand-name">USLA Akademi</div><div class="dsb-brand-sub">Yönetim Paneli</div></div></div>
+        <div class="dsb-user"><div class="dsb-av" id="adm-av" style="background:var(--gold);color:var(--navy)">A</div><div><div class="dsb-uname" id="adm-nm">Admin</div><span class="role-tag rt-admin">Admin</span></div></div>
+      </div>
+      <div class="dsb-nav">
+        <div class="dsb-sec-label">Yönetim</div>
+        <button class="si on" onclick="tab(this,'page-admin','adm-home')"><span class="si-ic">⊞</span>Genel Bakış</button>
+        <button class="si" onclick="tab(this,'page-admin','adm-users')"><span class="si-ic">👥</span>Kullanıcılar</button>
+        <button class="si" onclick="tab(this,'page-admin','adm-classes');renderAdmClasses()"><span class="si-ic">🏫</span>Sınıflar</button>
+        <button class="si" onclick="tab(this,'page-admin','adm-courses')"><span class="si-ic">📚</span>Kurslar</button>
+        <div class="dsb-sec-label">Platform</div>
+        <button class="si" onclick="tab(this,'page-admin','adm-ann')"><span class="si-ic">📢</span>Duyurular</button>
+        <button class="si" onclick="tab(this,'page-admin','adm-live')"><span class="si-ic">🎥</span>Canlı Dersler</button>
+      </div>
+      <div class="dsb-foot">
+        <button class="si" onclick="goHome()"><span class="si-ic">🌐</span>Siteye Dön</button>
+        <button class="si" onclick="doLogout()"><span class="si-ic">🚪</span>Çıkış Yap</button>
+      </div>
+    </div>
+    <div class="dmain">
+
+      <!-- GENEL BAKIŞ -->
+      <div id="adm-home">
+        <div class="ph"><div><div class="pt">Genel Bakış</div><div class="ps" id="adm-date-ps">Platform istatistikleri</div></div><button class="bsm bsm-r" onclick="openM('register')">+ Kullanıcı Ekle</button></div>
+        <div class="sg">
+          <div class="sc"><div class="sl">Toplam Kullanıcı</div><div class="sv" id="stat-users">—</div><div class="sg2 up" id="stat-users-s"></div></div>
+          <div class="sc"><div class="sl">Toplam Sınıf</div><div class="sv" id="stat-classes">—</div><div class="sg2 up" id="stat-classes-s"></div></div>
+          <div class="sc"><div class="sl">Aktif Öğrenci</div><div class="sv" id="stat-active">—</div><div class="sg2 up"></div></div>
+          <div class="sc"><div class="sl">Bekleyen Aktivasyon</div><div class="sv" id="stat-pending">—</div><div class="sg2 dn" id="stat-pending-s"></div></div>
+        </div>
+        <div class="tc">
+          <div class="tch"><div class="tct">Son Kayıt Olan Kullanıcılar</div><button class="bsm bsm-o" onclick="tab(document.querySelector('#page-admin .si:nth-child(3)'),'page-admin','adm-users')">Tümünü Gör →</button></div>
+          <table><thead><tr><th>Kullanıcı</th><th>Rol</th><th>Okul No</th><th>Hesap Durumu</th><th>İşlem</th></tr></thead>
+          <tbody id="adm-recent-users"></tbody></table>
+        </div>
+      </div>
+
+      <!-- KULLANICI YÖNETİMİ -->
+      <div id="adm-users" style="display:none">
+        <div class="ph"><div><div class="pt">Kullanıcı Yönetimi</div><div class="ps">Tüm platform kullanıcıları</div></div><button class="bsm bsm-r" onclick="openM('register')">+ Kullanıcı Ekle</button></div>
+        <div class="filter-bar">
+          <input type="text" placeholder="İsim veya e-posta ara..." oninput="renderAdmUsers(this.value, document.getElementById('filter-role').value, document.getElementById('filter-status').value)" id="filter-search"/>
+          <select id="filter-role" onchange="renderAdmUsers(document.getElementById('filter-search').value, this.value, document.getElementById('filter-status').value)">
+            <option value="">Tüm Roller</option>
+            <option value="admin">Admin</option>
+            <option value="instructor">Eğitmen</option>
+            <option value="student">Öğrenci</option>
+          </select>
+          <select id="filter-status" onchange="renderAdmUsers(document.getElementById('filter-search').value, document.getElementById('filter-role').value, this.value)">
+            <option value="">Tüm Durumlar</option>
+            <option value="active">Aktif</option>
+            <option value="locked">Kilitli</option>
+          </select>
+        </div>
+        <div class="tc">
+          <div class="tch"><div class="tct" id="users-count-title">Kullanıcılar</div></div>
+          <table><thead><tr><th>Kullanıcı</th><th>Rol</th><th>Okul No</th><th>Sınıf</th><th>Durum</th><th>İşlem</th></tr></thead>
+          <tbody id="adm-users-tbody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- SINIF YÖNETİMİ -->
+      <div id="adm-classes" style="display:none">
+        <div class="ph"><div><div class="pt">Sınıf Yönetimi</div><div class="ps">Sınıf, grup ve dönem bazlı öğrenci organizasyonu</div></div><button class="bsm bsm-r" onclick="openNewClassModal()">+ Sınıf Oluştur</button></div>
+
+        <!-- İç sekmeler: Sınıf listesi / Sınıf detay -->
+        <div id="class-list-view">
+          <div class="filter-bar">
+            <input type="text" placeholder="Sınıf ara..." oninput="renderAdmClasses(this.value)" id="class-filter-search"/>
+            <select onchange="renderAdmClasses(document.getElementById('class-filter-search').value, this.value)" id="class-filter-term">
+              <option value="">Tüm Dönemler</option>
+            </select>
+          </div>
+          <div class="class-grid" id="classes-grid"></div>
+          <div id="classes-empty" style="display:none"><div class="empty-state"><div class="empty-state-icon">🏫</div><div class="empty-state-text">Henüz sınıf oluşturulmadı</div><div class="empty-state-sub">Öğrencilerinizi organize etmek için sınıf oluşturun.</div></div></div>
+        </div>
+
+        <!-- Sınıf detay görünümü -->
+        <div id="class-detail-view" style="display:none">
+          <div style="margin-bottom:20px">
+            <button class="bsm bsm-o" onclick="showClassList()" style="margin-bottom:16px">← Sınıf Listesine Dön</button>
+            <div style="background:#fff;padding:20px;border-left:4px solid var(--gold);box-shadow:0 1px 8px rgba(10,22,40,.04);margin-bottom:18px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div>
+                  <div style="font-family:var(--font-serif);font-size:22px;font-weight:700;color:var(--navy)" id="detail-class-name"></div>
+                  <div style="display:flex;gap:8px;margin-top:8px" id="detail-class-tags"></div>
+                </div>
+                <div style="display:flex;gap:8px">
+                  <button class="bsm bsm-o" id="detail-edit-btn">✎ Düzenle</button>
+                  <button class="bsm bsm-red" id="detail-delete-btn">🗑 Sil</button>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:16px" id="detail-stats-row"></div>
+            </div>
+          </div>
+          <div class="tc">
+            <div class="tch">
+              <div class="tct">Sınıf Öğrencileri</div>
+              <div style="display:flex;gap:8px">
+                <button class="bsm bsm-gold" id="detail-add-btn">+ Öğrenci Ekle</button>
+              </div>
+            </div>
+            <div id="detail-student-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KURS YÖNETİMİ -->
+      <div id="adm-courses" style="display:none">
+        <div class="ph"><div><div class="pt">Kurs Yönetimi</div></div><button class="bsm bsm-r">+ Kurs Ekle</button></div>
+        <div class="tc"><table><thead><tr><th>Kurs Adı</th><th>Eğitmen</th><th>Öğrenci</th><th>Durum</th></tr></thead>
+        <tbody>
+          <tr><td>🔪 Profesyonel Aşçılık Eğitimi</td><td>USLA Kadrosu</td><td>84</td><td><span class="pill pg">Yayında</span></td></tr>
+          <tr><td>🥐 Profesyonel Pastacılık</td><td>USLA Kadrosu</td><td>62</td><td><span class="pill pg">Yayında</span></td></tr>
+          <tr><td>🍣 Shunichi Horikoshi ile Sushi</td><td>Shunichi Horikoshi</td><td>48</td><td><span class="pill pg">Yayında</span></td></tr>
+          <tr><td>☕ Barista Eğitimi</td><td>USLA Kadrosu</td><td>36</td><td><span class="pill pz">Taslak</span></td></tr>
+        </tbody></table></div>
+      </div>
+
+      <!-- DUYURULAR -->
+      <div id="adm-ann" style="display:none">
+        <div class="ph"><div><div class="pt">Duyurular</div></div><button class="bsm bsm-r">+ Duyuru Ekle</button></div>
+        <div class="tc"><div class="an-list">
+          <div class="an-item"><div class="an-line"></div><div><div class="an-title">Mayıs Canlı Ders Programı Yayınlandı</div><div class="an-body">Tüm eğitmenlerin Mayıs ayı canlı ders programları sisteme eklendi.</div><div class="an-date">2 MAYIS 2025</div></div></div>
+          <div class="an-item"><div class="an-line"></div><div><div class="an-title">Platform Güncellemesi v1.2</div><div class="an-body">Video oynatıcı iyileştirildi, kaldığı yerden devam özelliği güncellendi.</div><div class="an-date">28 NİSAN 2025</div></div></div>
+        </div></div>
+      </div>
+
+      <!-- CANLI DERSLER -->
+      <div id="adm-live" style="display:none">
+        <div class="ph"><div><div class="pt">Canlı Dersler</div></div><button class="bsm bsm-r">+ Ders Planla</button></div>
+        <div class="tc"><table><thead><tr><th>Kurs</th><th>Eğitmen</th><th>Tarih & Saat</th><th>Durum</th><th>İşlem</th></tr></thead>
+        <tbody>
+          <tr><td>🔪 Profesyonel Aşçılık — Modül 3</td><td>USLA Kadrosu</td><td>3 Mayıs, 14:00</td><td><span class="pill pg">Planlandı</span></td><td><button class="bsm bsm-r">Katıl</button></td></tr>
+          <tr><td>🥐 Pastacılık — Soru & Cevap</td><td>USLA Kadrosu</td><td>5 Mayıs, 16:00</td><td><span class="pill pg">Planlandı</span></td><td><button class="bsm bsm-r">Katıl</button></td></tr>
+        </tbody></table></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ INSTRUCTOR DASHBOARD ══════════════════════════════ -->
+<div id="page-instructor" class="page">
+  <div class="dash-wrap">
+    <div class="dsb">
+      <div class="dsb-head">
+        <div class="dsb-brand"><div class="dsb-brand-u">U</div><div><div class="dsb-brand-name">USLA Akademi</div><div class="dsb-brand-sub">Eğitmen Paneli</div></div></div>
+        <div class="dsb-user"><div class="dsb-av" id="ins-av" style="background:var(--navy)">E</div><div><div class="dsb-uname" id="ins-nm">Eğitmen</div><span class="role-tag rt-inst">Eğitmen</span></div></div>
+      </div>
+      <div class="dsb-nav">
+        <div class="dsb-sec-label">Panel</div>
+        <button class="si on" onclick="tab(this,'page-instructor','ins-home')"><span class="si-ic">⊞</span>Genel Bakış</button>
+        <button class="si" onclick="tab(this,'page-instructor','ins-courses')"><span class="si-ic">📚</span>Kurslarım</button>
+        <button class="si" onclick="tab(this,'page-instructor','ins-students')"><span class="si-ic">👥</span>Öğrencilerim</button>
+        <div class="dsb-sec-label">Araçlar</div>
+        <button class="si" onclick="tab(this,'page-instructor','ins-exams')"><span class="si-ic">📝</span>Sınavlar</button>
+        <button class="si" onclick="tab(this,'page-instructor','ins-live')"><span class="si-ic">🎥</span>Canlı Ders</button>
+      </div>
+      <div class="dsb-foot">
+        <button class="si" onclick="goHome()"><span class="si-ic">🌐</span>Siteye Dön</button>
+        <button class="si" onclick="doLogout()"><span class="si-ic">🚪</span>Çıkış Yap</button>
+      </div>
+    </div>
+    <div class="dmain">
+      <div id="ins-home">
+        <div class="ph"><div><div class="pt">Eğitmen Paneli</div><div class="ps">Kurslarınız ve öğrencileriniz</div></div><button class="bsm bsm-r">+ Yeni Kurs</button></div>
+        <div class="sg">
+          <div class="sc"><div class="sl">Aktif Kurs</div><div class="sv">3</div><div class="sg2 up">↑ Bu ay +1</div></div>
+          <div class="sc"><div class="sl">Toplam Öğrenci</div><div class="sv">194</div><div class="sg2 up">↑ Bu hafta +12</div></div>
+          <div class="sc"><div class="sl">Ort. İlerleme</div><div class="sv">%61</div><div class="sg2 up">↑ %5</div></div>
+          <div class="sc"><div class="sl">Canlı Ders</div><div class="sv">8</div><div class="sg2">Bu ay</div></div>
+        </div>
+        <div class="tc"><div class="tch"><div class="tct">Kurslarım</div></div>
+        <table><thead><tr><th>Kurs</th><th>Öğrenci</th><th>Ortalama İlerleme</th><th>Durum</th></tr></thead>
+        <tbody>
+          <tr><td>🔪 Profesyonel Aşçılık Eğitimi</td><td>84</td><td><div class="pb-w"><div class="pb-bg"><div class="pb-f" style="width:75%"></div></div></div></td><td><span class="pill pg">Yayında</span></td></tr>
+          <tr><td>🥐 Profesyonel Pastacılık</td><td>62</td><td><div class="pb-w"><div class="pb-bg"><div class="pb-f" style="width:58%"></div></div></div></td><td><span class="pill pg">Yayında</span></td></tr>
+          <tr><td>🍫 Mutfağa İlk Adım Çikolata</td><td>48</td><td><div class="pb-w"><div class="pb-bg"><div class="pb-f" style="width:42%"></div></div></div></td><td><span class="pill pz">Taslak</span></td></tr>
+        </tbody></table></div>
+      </div>
+      <div id="ins-courses" style="display:none"><div class="ph"><div class="pt">Kurslarım</div></div><p style="color:var(--gray)">Kurs yönetimi yakında eklenecek.</p></div>
+      <div id="ins-students" style="display:none"><div class="ph"><div class="pt">Öğrencilerim</div></div><p style="color:var(--gray)">Öğrenci listesi yakında eklenecek.</p></div>
+      <div id="ins-exams" style="display:none"><div class="ph"><div class="pt">Sınavlar</div></div><p style="color:var(--gray)">Sınav yönetimi yakında eklenecek.</p></div>
+      <div id="ins-live" style="display:none"><div class="ph"><div class="pt">Canlı Ders</div></div><p style="color:var(--gray)">Canlı ders planlaması yakında eklenecek.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ STUDENT DASHBOARD ══════════════════════════════ -->
+<div id="page-student" class="page">
+  <div class="dash-wrap">
+    <div class="dsb">
+      <div class="dsb-head">
+        <div class="dsb-brand"><div class="dsb-brand-u">U</div><div><div class="dsb-brand-name">USLA Akademi</div><div class="dsb-brand-sub">Öğrenci Paneli</div></div></div>
+        <div class="dsb-user"><div class="dsb-av" id="stu-av" style="background:var(--navy)">Ö</div><div><div class="dsb-uname" id="stu-nm">Öğrenci</div><span class="role-tag rt-stu">Öğrenci</span></div></div>
+      </div>
+      <div class="dsb-nav">
+        <div class="dsb-sec-label">Öğrenme</div>
+        <button class="si on" onclick="tab(this,'page-student','stu-home')"><span class="si-ic">⊞</span>Panelim</button>
+        <button class="si" onclick="tab(this,'page-student','stu-courses')"><span class="si-ic">📚</span>Kurslarım</button>
+        <button class="si" onclick="tab(this,'page-student','stu-explore')"><span class="si-ic">🔍</span>Kurs Keşfet</button>
+        <div class="dsb-sec-label">Akademik</div>
+        <button class="si" onclick="tab(this,'page-student','stu-exams')"><span class="si-ic">📝</span>Sınavlarım</button>
+        <button class="si" onclick="tab(this,'page-student','stu-live')"><span class="si-ic">🎥</span>Canlı Dersler</button>
+        <button class="si" onclick="tab(this,'page-student','stu-ann')"><span class="si-ic">🔔</span>Duyurular</button>
+      </div>
+      <div class="dsb-foot">
+        <button class="si" onclick="goHome()"><span class="si-ic">🌐</span>Siteye Dön</button>
+        <button class="si" onclick="doLogout()"><span class="si-ic">🚪</span>Çıkış Yap</button>
+      </div>
+    </div>
+    <div class="dmain">
+      <div id="stu-home">
+        <div class="ph"><div><div class="pt" id="stu-welcome">Hoş Geldiniz! 👋</div><div class="ps" id="stu-school-no-display"></div></div></div>
+        <div id="stu-locked-banner" style="display:none;background:#fef2f2;border-left:4px solid var(--red);padding:16px 20px;margin-bottom:20px;border-radius:1px">
+          <div style="font-size:13px;font-weight:700;color:var(--red)">🔒 Hesabınız Henüz Aktifleştirilmemiş</div>
+          <div style="font-size:12px;color:#7f1d1d;margin-top:4px;line-height:1.6">Yönetici hesabınızı onaylayana kadar platform özelliklerine erişiminiz kısıtlıdır. Lütfen akademiyle iletişime geçin.</div>
+        </div>
+        <div class="sg">
+          <div class="sc"><div class="sl">Kayıtlı Kurs</div><div class="sv">4</div><div class="sg2 up">↑ Bu ay +1</div></div>
+          <div class="sc"><div class="sl">Tamamlanan Ders</div><div class="sv">28</div><div class="sg2 up">↑ Bu hafta +5</div></div>
+          <div class="sc"><div class="sl">Ort. İlerleme</div><div class="sv">%67</div><div class="sg2 up">↑ %12</div></div>
+          <div class="sc"><div class="sl">Bekleyen Sınav</div><div class="sv">2</div><div class="sg2 dn">⚠ Bu hafta</div></div>
+        </div>
+        <div class="tc"><div class="tch"><div class="tct">Devam Eden Kurslar</div></div>
+        <table><thead><tr><th>Kurs</th><th>Eğitmen</th><th>İlerleme</th><th>İşlem</th></tr></thead>
+        <tbody>
+          <tr><td>🔪 Profesyonel Aşçılık Eğitimi</td><td>USLA Kadrosu</td><td><div class="pb-w"><div class="pb-bg"><div class="pb-f" style="width:75%"></div></div><small style="font-size:9px;color:var(--gray)">%75</small></div></td><td><button class="bsm bsm-r">Devam Et</button></td></tr>
+          <tr><td>🥐 Profesyonel Pastacılık</td><td>USLA Kadrosu</td><td><div class="pb-w"><div class="pb-bg"><div class="pb-f" style="width:40%"></div></div><small style="font-size:9px;color:var(--gray)">%40</small></div></td><td><button class="bsm bsm-r">Devam Et</button></td></tr>
+          <tr><td>🍣 Shunichi Horikoshi ile Sushi</td><td>S. Horikoshi</td><td><div class="pb-w"><div class="pb-bg"><div class="pb-f" style="width:25%"></div></div><small style="font-size:9px;color:var(--gray)">%25</small></div></td><td><button class="bsm bsm-r">Başla</button></td></tr>
+        </tbody></table></div>
+      </div>
+      <div id="stu-courses" style="display:none"><div class="ph"><div class="pt">Kurslarım</div></div>
+        <div class="cg">
+          <div class="ccu"><div class="ctu">🔪</div><div class="cbu"><div class="cnu">Profesyonel Aşçılık Eğitimi</div><div class="ciu">USLA Kadrosu</div><div class="cpl"><span>İlerleme</span><span>%75</span></div><div class="pb-bg"><div class="pb-f" style="width:75%"></div></div></div></div>
+          <div class="ccu"><div class="ctu">🥐</div><div class="cbu"><div class="cnu">Profesyonel Pastacılık</div><div class="ciu">USLA Kadrosu</div><div class="cpl"><span>İlerleme</span><span>%40</span></div><div class="pb-bg"><div class="pb-f" style="width:40%"></div></div></div></div>
+          <div class="ccu"><div class="ctu">🍣</div><div class="cbu"><div class="cnu">Shunichi Horikoshi ile Sushi</div><div class="ciu">Shunichi Horikoshi</div><div class="cpl"><span>İlerleme</span><span>%25</span></div><div class="pb-bg"><div class="pb-f" style="width:25%"></div></div></div></div>
+        </div>
+      </div>
+      <div id="stu-explore" style="display:none"><div class="ph"><div class="pt">Kurs Keşfet</div></div><p style="color:var(--gray)">Kurs kataloğu yakında eklenecek.</p></div>
+      <div id="stu-exams" style="display:none"><div class="ph"><div class="pt">Sınavlarım</div></div><p style="color:var(--gray)">Sınav listesi yakında eklenecek.</p></div>
+      <div id="stu-live" style="display:none"><div class="ph"><div class="pt">Canlı Dersler</div></div><p style="color:var(--gray)">Yaklaşan canlı dersler yakında eklenecek.</p></div>
+      <div id="stu-ann" style="display:none"><div class="ph"><div class="pt">Duyurular</div></div><p style="color:var(--gray)">Duyurular yakında eklenecek.</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════
+//  VERİ MODELİ
+// ════════════════════════════════════
+const COLORS = ['#b8972a','#0a1628','#112240','#c0392b','#16a34a','#2563eb','#7c3aed','#d97706'];
+
+let db = [
+  {id:'u1', email:'admin@usla.com',    pw:'Usla2025!',    role:'admin',      name:'Admin Kullanıcı',  init:'AU', color:'#b8972a', schoolNo:'', active:true,  classId:null},
+  {id:'u2', email:'egitmen@usla.com',  pw:'Chef2025!',    role:'instructor', name:'Chef Eğitmen',      init:'CE', color:'#0a1628', schoolNo:'', active:true,  classId:null},
+  {id:'u3', email:'ogrenci@usla.com',  pw:'Ogrenci2025!', role:'student',    name:'Ali Öğrenci',       init:'AO', color:'#112240', schoolNo:'USLA-2025-001', active:true,  classId:null},
+  // Örnek öğrenciler
+  {id:'u4', email:'ayse@mail.com',     pw:'Ayse2025!',    role:'student',    name:'Ayşe Yıldız',       init:'AY', color:'#2563eb', schoolNo:'USLA-2025-002', active:false, classId:null},
+  {id:'u5', email:'mehmet@mail.com',   pw:'Mehmet2025!',  role:'student',    name:'Mehmet Kaya',       init:'MK', color:'#7c3aed', schoolNo:'',              active:false, classId:null},
+  {id:'u6', email:'selin@mail.com',    pw:'Selin2025!',   role:'student',    name:'Selin Arslan',      init:'SA', color:'#c0392b', schoolNo:'USLA-2025-003', active:true,  classId:null},
+  {id:'u7', email:'emre@mail.com',     pw:'Emre2025!',    role:'student',    name:'Emre Demir',        init:'ED', color:'#16a34a', schoolNo:'',              active:false, classId:null},
+  {id:'u8', email:'zeynep@mail.com',   pw:'Zeynep2025!',  role:'instructor', name:'Chef Zeynep Kul',   init:'ZK', color:'#d97706', schoolNo:'',              active:true,  classId:null},
+];
+
+let classes = [
+  {id:'c1', name:'Aşçılık A', group:'Grup 1', term:'2025 Bahar', course:'🔪 Profesyonel Aşçılık Eğitimi', instructor:'u2', desc:'Sabah grubu profesyonel aşçılık', students:['u3','u4']},
+  {id:'c2', name:'Pastacılık B', group:'Grup 2', term:'2025 Bahar', course:'🥐 Profesyonel Pastacılık', instructor:'u8', desc:'Öğleden sonra pastacılık grubu', students:['u6']},
+];
+
+let me = null;
+let currentClassId = null;
+let editingStudentId = null;
+let addStudentClassId = null;
+
+// ════════════════════════════════════
+//  YARDIMCI FONKSİYONLAR
+// ════════════════════════════════════
+function uid(){return 'u'+Date.now()}
+function cid(){return 'c'+Date.now()}
+function showToast(msg, type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast toast-'+type+' show';
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+function getUser(id){return db.find(u=>u.id===id)}
+function getClass(id){return classes.find(c=>c.id===id)}
+function getStudentClass(uid){
+  const cls = classes.find(c=>c.students.includes(uid));
+  return cls || null;
+}
+function getInstructors(){return db.filter(u=>u.role==='instructor')}
+function getStudents(){return db.filter(u=>u.role==='student')}
+
+// ════════════════════════════════════
+//  SAYFA YÖNETİMİ
+// ════════════════════════════════════
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const isLand=id==='page-landing';
+  ['nav-public','nav-auth-btns','tb','main-nav'].forEach(el=>{
+    const e=document.getElementById(el);
+    if(e) e.style.display=isLand?'':'none';
+  });
+  if(isLand) window.scrollTo(0,0);
+}
+function goHome(){if(me){routeTo(me);return;}showPage('page-landing');}
+function routeTo(u){
+  if(u.role==='admin'){
+    document.getElementById('adm-nm').textContent=u.name;
+    document.getElementById('adm-av').textContent=u.init;
+    document.getElementById('adm-av').style.background=u.color;
+    resetPage('page-admin','adm-home');
+    renderAdmHome();
+    showPage('page-admin');
+  } else if(u.role==='instructor'){
+    document.getElementById('ins-nm').textContent=u.name;
+    document.getElementById('ins-av').textContent=u.init;
+    document.getElementById('ins-av').style.background=u.color;
+    resetPage('page-instructor','ins-home');showPage('page-instructor');
+  } else {
+    document.getElementById('stu-nm').textContent=u.name;
+    document.getElementById('stu-av').textContent=u.init;
+    document.getElementById('stu-av').style.background=u.color;
+    document.getElementById('stu-welcome').textContent='Hoş Geldiniz, '+u.name.split(' ')[0]+'! 👋';
+    const noEl=document.getElementById('stu-school-no-display');
+    noEl.textContent = u.schoolNo ? '📋 Okul No: '+u.schoolNo : '';
+    const banner=document.getElementById('stu-locked-banner');
+    banner.style.display = u.active ? 'none' : 'block';
+    resetPage('page-student','stu-home');showPage('page-student');
+  }
+}
+function resetPage(pid,hid){
+  const pg=document.getElementById(pid);
+  pg.querySelectorAll('.dsb .si').forEach(b=>b.classList.remove('on'));
+  const f=pg.querySelector('.dsb .si');if(f)f.classList.add('on');
+  pg.querySelectorAll('.dmain>div').forEach(d=>d.style.display='none');
+  const h=document.getElementById(hid);if(h)h.style.display='block';
+}
+function tab(btn,pid,tid){
+  document.getElementById(pid).querySelectorAll('.dsb .si').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById(pid).querySelectorAll('.dmain>div').forEach(d=>d.style.display='none');
+  const t=document.getElementById(tid);if(t)t.style.display='block';
+}
+function doLogout(){me=null;showPage('page-landing');}
+
+// ════════════════════════════════════
+//  MODAL YÖNETİMİ
+// ════════════════════════════════════
+function openM(t){
+  document.getElementById('modal-'+t).classList.add('open');
+  document.body.style.overflow='hidden';
+  clearErr();
+  if(t==='add-student' && addStudentClassId) renderAddStudentList();
+}
+function closeM(t){
+  document.getElementById('modal-'+t).classList.remove('open');
+  document.body.style.overflow='';
+  clearErr();
+}
+function switchM(f,t){closeM(f);setTimeout(()=>openM(t),140);}
+function bgClose(e,t){if(e.target===e.currentTarget)closeM(t);}
+function clearErr(){document.querySelectorAll('.form-error,.form-success').forEach(el=>el.classList.remove('show'));}
+function showErr(id,msg){const el=document.getElementById(id);el.textContent=msg;el.classList.add('show');}
+function showOk(id,msg){const el=document.getElementById(id);el.textContent=msg;el.classList.add('show');}
+function togglePw(id,btn){const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';btn.textContent=i.type==='password'?'👁':'🙈';}
+
+// ════════════════════════════════════
+//  AUTH
+// ════════════════════════════════════
+function doLogin(){
+  const email=document.getElementById('lin-email').value.trim().toLowerCase();
+  const pw=document.getElementById('lin-pw').value;
+  if(!email||!pw){showErr('login-err','E-posta ve şifre zorunludur.');return;}
+  const u=db.find(x=>x.email.toLowerCase()===email&&x.pw===pw);
+  if(!u){showErr('login-err','E-posta veya şifre hatalı. Demo bilgilerini deneyin.');return;}
+  me=u;closeM('login');routeTo(u);
+}
+function doRegister(){
+  const name=document.getElementById('reg-name').value.trim();
+  const email=document.getElementById('reg-email').value.trim().toLowerCase();
+  const role=document.getElementById('reg-role').value;
+  const pw=document.getElementById('reg-pw').value;
+  const pw2=document.getElementById('reg-pw2').value;
+  if(!name||!email||!pw||!pw2){showErr('reg-err','Tüm alanları doldurun.');return;}
+  if(pw.length<8){showErr('reg-err','Şifre en az 8 karakter olmalı.');return;}
+  if(pw!==pw2){showErr('reg-err','Şifreler eşleşmiyor.');return;}
+  if(db.find(x=>x.email===email)){showErr('reg-err','Bu e-posta zaten kayıtlı.');return;}
+  const inits=name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+  const color=COLORS[db.length % COLORS.length];
+  const newU={id:uid(),email,pw,role,name,init:inits,color,schoolNo:'',active:false,classId:null};
+  db.push(newU);
+  showOk('reg-ok','✓ Hesabınız oluşturuldu! Yönlendiriliyorsunuz...');
+  setTimeout(()=>{me=newU;closeM('register');routeTo(newU);},1100);
+}
+function scrollSec(id){
+  if(!document.getElementById('page-landing').classList.contains('active')) showPage('page-landing');
+  setTimeout(()=>{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth'});},120);
+}
+
+// ════════════════════════════════════
+//  ADMIN — GENEL BAKIŞ
+// ════════════════════════════════════
+function renderAdmHome(){
+  const students = db.filter(u=>u.role==='student');
+  const activeStudents = students.filter(u=>u.active);
+  const pendingStudents = students.filter(u=>!u.active);
+  document.getElementById('stat-users').textContent = db.length;
+  document.getElementById('stat-classes').textContent = classes.length;
+  document.getElementById('stat-active').textContent = activeStudents.length;
+  document.getElementById('stat-pending').textContent = pendingStudents.length;
+  document.getElementById('stat-users-s').textContent = db.length + ' toplam';
+  document.getElementById('stat-classes-s').textContent = classes.length + ' aktif';
+  document.getElementById('stat-pending-s').textContent = pendingStudents.length > 0 ? '⚠ Onay bekliyor' : '—';
+  const now = new Date();
+  document.getElementById('adm-date-ps').textContent = 'Platform istatistikleri — ' + now.toLocaleDateString('tr-TR',{month:'long',year:'numeric'});
+
+  const tbody = document.getElementById('adm-recent-users');
+  const recent = [...db].reverse().slice(0,6);
+  tbody.innerHTML = recent.map(u=>userRow(u, true)).join('');
+}
+
+// ════════════════════════════════════
+//  ADMIN — KULLANICI YÖNETİMİ
+// ════════════════════════════════════
+function renderAdmUsers(search='', role='', status=''){
+  let list = [...db];
+  if(search) list = list.filter(u=>u.name.toLowerCase().includes(search.toLowerCase())||u.email.toLowerCase().includes(search.toLowerCase()));
+  if(role) list = list.filter(u=>u.role===role);
+  if(status==='active') list = list.filter(u=>u.active);
+  if(status==='locked') list = list.filter(u=>!u.active);
+  document.getElementById('users-count-title').textContent = 'Kullanıcılar ('+list.length+')';
+  document.getElementById('adm-users-tbody').innerHTML = list.map(u=>userRow(u, false)).join('');
+}
+function userRow(u, compact){
+  const cls = getStudentClass(u.id);
+  const schoolNoHtml = u.schoolNo
+    ? `<span class="school-no">📋 ${u.schoolNo}</span>`
+    : `<span class="school-no-empty">— Atanmadı</span>`;
+  const statusHtml = u.active
+    ? `<span class="status-active">✓ Aktif</span>`
+    : `<span class="status-locked">🔒 Kilitli</span>`;
+  const roleLabel = {admin:'Admin',instructor:'Eğitmen',student:'Öğrenci'}[u.role];
+  const rolePill = {admin:'py',instructor:'pr',student:'pg'}[u.role];
+  const clsHtml = cls ? `<span style="font-size:11px;color:var(--navy);font-weight:600">${cls.name}</span><br><span style="font-size:10px;color:var(--gray)">${cls.group} · ${cls.term}</span>` : `<span style="font-size:10px;color:var(--gray)">—</span>`;
+  return `<tr>
+    <td><div class="uc"><div class="ua" style="background:${u.color}">${u.init}</div><div><div class="un">${u.name}</div><div class="ue">${u.email}</div></div></div></td>
+    <td><span class="pill ${rolePill}">${roleLabel}</span></td>
+    <td>${schoolNoHtml}</td>
+    ${!compact ? `<td>${clsHtml}</td>` : ''}
+    <td>${statusHtml}</td>
+    <td><button class="bsm bsm-o" onclick="openStudentEdit('${u.id}')">Düzenle</button></td>
+  </tr>`;
+}
+
+// ════════════════════════════════════
+//  ADMIN — ÖĞRENCİ DÜZENLE (Okul No + Aktivasyon)
+// ════════════════════════════════════
+function openStudentEdit(uid){
+  const u = getUser(uid);
+  if(!u) return;
+  editingStudentId = uid;
+  document.getElementById('stu-edit-uid').value = uid;
+  document.getElementById('stu-edit-name').textContent = u.name;
+  document.getElementById('stu-edit-email').textContent = u.email + ' · ' + {admin:'Admin',instructor:'Eğitmen',student:'Öğrenci'}[u.role];
+  document.getElementById('stu-edit-no').value = u.schoolNo || '';
+  updateActivationUI(u);
+  document.getElementById('stu-edit-ok').classList.remove('show');
+  openM('student-edit');
+}
+function updateActivationUI(u){
+  const statusEl = document.getElementById('stu-edit-status');
+  const descEl = document.getElementById('stu-edit-status-desc');
+  const activateBtn = document.getElementById('stu-activate-btn');
+  const deactivateBtn = document.getElementById('stu-deactivate-btn');
+  if(u.active){
+    statusEl.innerHTML = '<span class="status-active">✓ Hesap Aktif</span>';
+    descEl.textContent = 'Bu hesap aktif. Öğrenci platforma giriş yapabilir. Kilitlemek için aşağıdaki butonu kullanın.';
+    activateBtn.style.display='none';
+    deactivateBtn.style.display='inline-block';
+  } else {
+    statusEl.innerHTML = '<span class="status-locked">🔒 Hesap Kilitli</span>';
+    descEl.textContent = 'Bu hesap henüz aktif değil. Öğrencinin platforma erişimi kısıtlıdır. Aktif etmek için onaylayın.';
+    activateBtn.style.display='inline-block';
+    deactivateBtn.style.display='none';
+  }
+}
+function toggleStudentActivation(){
+  const uid = document.getElementById('stu-edit-uid').value;
+  const u = getUser(uid);
+  if(!u) return;
+  u.active = !u.active;
+  updateActivationUI(u);
+  showOk('stu-edit-ok', u.active ? '✓ Hesap başarıyla aktif edildi.' : '🔒 Hesap kilitlendi.');
+  showToast(u.active ? '✓ '+u.name+' hesabı aktif edildi' : '🔒 '+u.name+' hesabı kilitlendi', u.active ? 'ok' : 'err');
+  if(document.getElementById('adm-home').style.display!=='none') renderAdmHome();
+  if(document.getElementById('adm-users').style.display!=='none') renderAdmUsers();
+}
+function saveStudentEdit(){
+  const uid = document.getElementById('stu-edit-uid').value;
+  const u = getUser(uid);
+  if(!u) return;
+  const no = document.getElementById('stu-edit-no').value.trim();
+  // Okul no benzersizlik kontrolü
+  if(no && db.find(x=>x.id!==uid && x.schoolNo===no)){
+    showErr('stu-edit-ok','Bu okul numarası başka bir kullanıcıya atanmış.'); // reuse as err
+    document.getElementById('stu-edit-ok').classList.remove('show');
+    const errDiv=document.createElement('div');
+    errDiv.style.cssText='background:#fef2f2;border-left:3px solid var(--red);padding:10px 12px;font-size:12px;color:var(--red);margin-bottom:14px';
+    errDiv.textContent='❌ Bu okul numarası zaten kullanılıyor.';
+    document.getElementById('stu-edit-ok').before(errDiv);
+    setTimeout(()=>errDiv.remove(),2500);
+    return;
+  }
+  u.schoolNo = no;
+  showOk('stu-edit-ok','✓ Değişiklikler kaydedildi.');
+  showToast('✓ Öğrenci bilgileri güncellendi');
+  if(document.getElementById('adm-home').style.display!=='none') renderAdmHome();
+  if(document.getElementById('adm-users').style.display!=='none') renderAdmUsers();
+  if(currentClassId) renderClassDetail(currentClassId);
+}
+
+// ════════════════════════════════════
+//  ADMIN — SINIF YÖNETİMİ
+// ════════════════════════════════════
+function renderAdmClasses(search='', term=''){
+  const grid = document.getElementById('classes-grid');
+  const empty = document.getElementById('classes-empty');
+  // Dönem filtresi seçenekleri
+  const termSel = document.getElementById('class-filter-term');
+  const terms = [...new Set(classes.map(c=>c.term))];
+  const curTerm = termSel.value;
+  termSel.innerHTML = '<option value="">Tüm Dönemler</option>'+terms.map(t=>`<option ${t===curTerm?'selected':''} value="${t}">${t}</option>`).join('');
+  if(term) termSel.value = term;
+
+  let list = [...classes];
+  if(search) list = list.filter(c=>c.name.toLowerCase().includes(search.toLowerCase())||c.group.toLowerCase().includes(search.toLowerCase()));
+  if(term) list = list.filter(c=>c.term===term);
+
+  if(!list.length){grid.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  grid.innerHTML = list.map(c=>classCard(c)).join('');
+}
+function classCard(c){
+  const studentCount = c.students.length;
+  const activeCount = c.students.filter(id=>{const u=getUser(id);return u&&u.active;}).length;
+  const instructor = c.instructor ? getUser(c.instructor) : null;
+  return `<div class="class-card" onclick="openClassDetail('${c.id}')">
+    <div class="class-card-head">
+      <div class="class-card-name">${c.name}</div>
+      <div class="class-card-meta">
+        <span class="class-meta-tag">${c.group}</span>
+        <span class="class-meta-tag">${c.term}</span>
+        ${c.course ? `<span class="class-meta-tag">${c.course.split(' ').slice(0,2).join(' ')}</span>` : ''}
+      </div>
+    </div>
+    <div class="class-card-body">
+      <div class="class-stat-row"><span class="class-stat-label">Öğrenci Sayısı</span><span class="class-stat-val">${studentCount}</span></div>
+      <div class="class-stat-row"><span class="class-stat-label">Aktif Öğrenci</span><span class="class-stat-val" style="color:var(--green)">${activeCount}</span></div>
+      <div class="class-stat-row"><span class="class-stat-label">Eğitmen</span><span class="class-stat-val" style="font-size:11px">${instructor ? instructor.name : '—'}</span></div>
+    </div>
+    <div class="class-card-foot">
+      <button class="bsm bsm-r" onclick="event.stopPropagation();openClassDetail('${c.id}')">Detay →</button>
+      <button class="bsm bsm-o" onclick="event.stopPropagation();openEditClassModal('${c.id}')">✎ Düzenle</button>
+    </div>
+  </div>`;
+}
+function openClassDetail(id){
+  currentClassId = id;
+  document.getElementById('class-list-view').style.display='none';
+  document.getElementById('class-detail-view').style.display='block';
+  renderClassDetail(id);
+}
+function showClassList(){
+  currentClassId = null;
+  document.getElementById('class-detail-view').style.display='none';
+  document.getElementById('class-list-view').style.display='block';
+  renderAdmClasses();
+}
+function renderClassDetail(id){
+  const c = getClass(id);
+  if(!c) return;
+  document.getElementById('detail-class-name').textContent = c.name;
+  document.getElementById('detail-class-tags').innerHTML =
+    `<span class="class-meta-tag">${c.group}</span><span class="class-meta-tag">${c.term}</span>${c.course?`<span class="class-meta-tag">${c.course}</span>`:''}`;
+  const instructor = c.instructor ? getUser(c.instructor) : null;
+  const activeCount = c.students.filter(id=>{const u=getUser(id);return u&&u.active;}).length;
+  const lockedCount = c.students.length - activeCount;
+  document.getElementById('detail-stats-row').innerHTML = `
+    <div class="sc" style="margin:0"><div class="sl">Toplam Öğrenci</div><div class="sv">${c.students.length}</div></div>
+    <div class="sc" style="margin:0"><div class="sl">Aktif</div><div class="sv" style="color:var(--green)">${activeCount}</div></div>
+    <div class="sc" style="margin:0"><div class="sl">Kilitli</div><div class="sv" style="color:var(--red)">${lockedCount}</div></div>
+    <div class="sc" style="margin:0"><div class="sl">Eğitmen</div><div class="sv" style="font-size:16px">${instructor ? instructor.name.split(' ').slice(-1)[0] : '—'}</div></div>
+  `;
+  document.getElementById('detail-edit-btn').onclick = ()=>openEditClassModal(id);
+  document.getElementById('detail-delete-btn').onclick = ()=>deleteClass(id);
+  document.getElementById('detail-add-btn').onclick = ()=>{ addStudentClassId=id; document.getElementById('add-stu-classname').textContent=c.name; openM('add-student'); };
+
+  const listEl = document.getElementById('detail-student-list');
+  if(!c.students.length){
+    listEl.innerHTML='<div class="empty-state" style="padding:40px"><div class="empty-state-icon">👤</div><div class="empty-state-text">Bu sınıfta öğrenci yok</div><div class="empty-state-sub">Öğrenci eklemek için yukarıdaki butonu kullanın.</div></div>';
+    return;
+  }
+  listEl.innerHTML = c.students.map(sid=>{
+    const u = getUser(sid);
+    if(!u) return '';
+    return `<div class="student-list-item">
+      <div class="sli-av" style="background:${u.color}">${u.init}</div>
+      <div class="sli-info">
+        <div class="sli-name">${u.name}</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:2px">
+          ${u.schoolNo ? `<span class="sli-no">📋 ${u.schoolNo}</span>` : `<span style="font-size:10px;color:var(--gray)">Okul No: —</span>`}
+          <span class="sli-email">${u.email}</span>
+        </div>
+      </div>
+      <div class="sli-actions">
+        ${u.active
+          ? `<span class="status-active">✓ Aktif</span>`
+          : `<span class="status-locked">🔒 Kilitli</span>`}
+        <button class="bsm bsm-o" onclick="openStudentEdit('${u.id}')">Düzenle</button>
+        <button class="bsm bsm-red" onclick="removeStudentFromClass('${c.id}','${u.id}')">Çıkar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function removeStudentFromClass(cid, uid){
+  const c = getClass(cid);
+  if(!c) return;
+  c.students = c.students.filter(s=>s!==uid);
+  renderClassDetail(cid);
+  renderAdmHome();
+  showToast('Öğrenci sınıftan çıkarıldı', 'err');
+}
+
+// Sınıf oluştur / düzenle modal
+function openNewClassModal(){
+  document.getElementById('class-modal-title').textContent = 'Yeni Sınıf Oluştur';
+  document.getElementById('cls-name').value='';
+  document.getElementById('cls-group').value='';
+  document.getElementById('cls-term').value='';
+  document.getElementById('cls-course').value='';
+  document.getElementById('cls-desc').value='';
+  document.getElementById('cls-edit-id').value='';
+  fillInstructorSelect();
+  openM('class');
+}
+function openEditClassModal(id){
+  const c = getClass(id);
+  if(!c) return;
+  document.getElementById('class-modal-title').textContent = 'Sınıfı Düzenle';
+  document.getElementById('cls-name').value=c.name;
+  document.getElementById('cls-group').value=c.group;
+  document.getElementById('cls-term').value=c.term;
+  document.getElementById('cls-course').value=c.course||'';
+  document.getElementById('cls-desc').value=c.desc||'';
+  document.getElementById('cls-edit-id').value=c.id;
+  fillInstructorSelect(c.instructor);
+  openM('class');
+}
+function fillInstructorSelect(selected=''){
+  const sel = document.getElementById('cls-instructor');
+  const instructors = getInstructors();
+  sel.innerHTML='<option value="">— Seçiniz —</option>'+instructors.map(i=>`<option value="${i.id}" ${i.id===selected?'selected':''}>${i.name}</option>`).join('');
+}
+function saveClass(){
+  const name=document.getElementById('cls-name').value.trim();
+  const group=document.getElementById('cls-group').value.trim();
+  const term=document.getElementById('cls-term').value.trim();
+  const course=document.getElementById('cls-course').value;
+  const instructor=document.getElementById('cls-instructor').value;
+  const desc=document.getElementById('cls-desc').value.trim();
+  const editId=document.getElementById('cls-edit-id').value;
+  if(!name||!group||!term){showErr('class-err','Sınıf adı, grup ve dönem zorunludur.');return;}
+  if(editId){
+    const c=getClass(editId);
+    if(c){Object.assign(c,{name,group,term,course,instructor,desc});}
+    showToast('✓ Sınıf güncellendi');
+  } else {
+    classes.push({id:cid(),name,group,term,course,instructor,desc,students:[]});
+    showToast('✓ Yeni sınıf oluşturuldu');
+  }
+  closeM('class');
+  renderAdmClasses();
+  renderAdmHome();
+}
+function deleteClass(id){
+  if(!confirm('Bu sınıfı silmek istediğinizden emin misiniz?')) return;
+  classes = classes.filter(c=>c.id!==id);
+  showClassList();
+  showToast('Sınıf silindi', 'err');
+}
+
+// Öğrenci ekleme modal
+function renderAddStudentList(){
+  const c = getClass(addStudentClassId);
+  if(!c) return;
+  const available = getStudents().filter(u=>!c.students.includes(u.id));
+  const el = document.getElementById('add-student-list');
+  if(!available.length){
+    el.innerHTML='<div style="padding:24px;text-align:center;color:var(--gray);font-size:12px">Eklenebilecek öğrenci kalmadı.</div>';
+    return;
+  }
+  el.innerHTML = available.map(u=>`
+    <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #f0ece4;cursor:pointer;transition:background .15s" onmouseenter="this.style.background='#faf8f4'" onmouseleave="this.style.background=''">
+      <input type="checkbox" value="${u.id}" style="width:16px;height:16px;accent-color:var(--gold)"/>
+      <div class="sli-av" style="background:${u.color};width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">${u.init}</div>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:600;color:var(--navy)">${u.name}</div>
+        <div style="font-size:10px;color:var(--gray)">${u.email}</div>
+      </div>
+      <div>
+        ${u.schoolNo ? `<span class="school-no">📋 ${u.schoolNo}</span>` : `<span class="school-no-empty">No Yok</span>`}
+        ${u.active ? `<span class="status-active" style="margin-left:4px">Aktif</span>` : `<span class="status-locked" style="margin-left:4px">Kilitli</span>`}
+      </div>
+    </label>
+  `).join('');
+}
+function confirmAddStudents(){
+  const c = getClass(addStudentClassId);
+  if(!c) return;
+  const checked = [...document.getElementById('add-student-list').querySelectorAll('input[type=checkbox]:checked')];
+  if(!checked.length){showToast('Lütfen en az bir öğrenci seçin','err');return;}
+  checked.forEach(cb=>{ if(!c.students.includes(cb.value)) c.students.push(cb.value); });
+  closeM('add-student');
+  renderClassDetail(addStudentClassId);
+  renderAdmHome();
+  showToast('✓ '+checked.length+' öğrenci sınıfa eklendi');
+}
+
+// ════════════════════════════════════
+//  KLAVYE
+// ════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')['login','register','class','add-student','student-edit'].forEach(t=>closeM(t));
+});
+
+// ════════════════════════════════════
+//  BAŞLANGIÇ
+// ════════════════════════════════════
+renderAdmHome();
+</script>
+</body>
+</html>
